@@ -8,6 +8,7 @@ public class FiletransferApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(FiletransferApplication.class, args);
+		System.out.println("Hello World FileTransfer!");
 	}
 
 }
