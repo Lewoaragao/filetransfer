@@ -75,7 +75,7 @@ public class FileController {
 			filePaths.add(fileResponse.getBody().getFileName());
 		}
 
-		FilesResponse response = new FilesResponse("Arquivo enviado com sucesso", filePaths);
+		FilesResponse response = new FilesResponse("Arquivos enviados com sucesso", filePaths);
 		return ResponseEntity.ok(response);
 	}
 
