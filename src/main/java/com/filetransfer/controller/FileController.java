@@ -15,11 +15,14 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,15 +34,20 @@ import org.springframework.web.multipart.MultipartFile;
 import com.filetransfer.controller.response.FileResponse;
 import com.filetransfer.controller.response.FilesResponse;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/file")
 @RequiredArgsConstructor
 public class FileController {
 
 	private final String uploadDir = "src/main/resources/static/uploads";
+
+	@GetMapping("/")
+	public ResponseEntity<String> uploadFile() throws IOException {
+		return ResponseEntity.ok("Aplicação configurada com sucesso!");
+	}
 
 	@PostMapping("/upload")
 	public ResponseEntity<FileResponse> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
@@ -94,31 +102,6 @@ public class FileController {
 		}
 	}
 
-//	@GetMapping("/downloads")
-//	public void downloadMultipleFiles(@RequestParam List<String> filePaths, HttpServletResponse response)
-//			throws IOException {
-//		response.setContentType("application/zip");
-//		response.setHeader("Content-Disposition", "attachment; filename=filetransfer.zip");
-//
-//		try (ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream())) {
-//			for (String filePath : filePaths) {
-//				File file = new File(filePath);
-//
-//				if (file.exists()) {
-//					FileInputStream fis = new FileInputStream(file);
-//					ZipEntry zipEntry = new ZipEntry(file.getName());
-//					zipOut.putNextEntry(zipEntry);
-//
-//					FileCopyUtils.copy(fis, zipOut);
-//					fis.close();
-//					zipOut.closeEntry();
-//				}
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	@GetMapping("/downloads")
 	public void downloadMultipleFiles(@RequestParam List<String> fileNames, HttpServletResponse response)
 			throws IOException {
@@ -142,7 +125,7 @@ public class FileController {
 					fis.close();
 					zipOut.closeEntry();
 				}
-				
+
 				response.setStatus(HttpServletResponse.SC_OK);
 			}
 		} catch (Exception e) {
