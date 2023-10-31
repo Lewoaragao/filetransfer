@@ -16,7 +16,7 @@ public class RotaController {
 
 	@GetMapping("/")
 	public ResponseEntity<String> uploadFile() throws IOException {
-		return ResponseEntity.ok("Aplicação configurada com sucesso!");
+		return ResponseEntity.ok("Hello World FileTransfer!");
 	}
 
 }

@@ -55,21 +55,8 @@ public class FileController {
 			return ResponseEntity.badRequest().body(new FileResponse("Arquivo vazio", null));
 		}
 
-		UUID uniqueId = UUID.randomUUID();
-		LocalDateTime currentTime = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-		String formattedDateTime = currentTime.format(formatter);
-		String uniqueFileName = uniqueId.toString() + "_" + formattedDateTime;
-
-		Path uploadPath = Paths.get(uploadDir); // Substitua o caminho conforme necessário
-		Files.createDirectories(uploadPath);
-		String fileExtension = "."
-				+ file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-		String fullUniqueFileName = uniqueFileName + fileExtension;
-		Path destinationPath = uploadPath.resolve(fullUniqueFileName);
-		Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-
-		FileResponse response = new FileResponse("Arquivo enviado com sucesso", fullUniqueFileName);
+		String nameFile = this.saveFile(file);
+		FileResponse response = new FileResponse("Arquivo enviado com sucesso", nameFile);
 		return ResponseEntity.ok(response);
 	}
 
@@ -79,8 +66,8 @@ public class FileController {
 		List<String> filePaths = new ArrayList<>();
 
 		for (MultipartFile file : files) {
-			ResponseEntity<FileResponse> fileResponse = this.uploadFile(file);
-			filePaths.add(fileResponse.getBody().getFileName());
+			String nameFile = this.saveFile(file);
+			filePaths.add(nameFile);
 		}
 
 		FilesResponse response = new FilesResponse("Arquivos enviados com sucesso", filePaths);
@@ -166,5 +153,23 @@ public class FileController {
 		default:
 			return MediaType.APPLICATION_OCTET_STREAM;
 		}
+	}
+	
+	public String saveFile(MultipartFile file) throws IOException {
+		UUID uniqueId = UUID.randomUUID();
+		LocalDateTime currentTime = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+		String formattedDateTime = currentTime.format(formatter);
+		String uniqueFileName = uniqueId.toString() + "_" + formattedDateTime;
+
+		Path uploadPath = Paths.get(uploadDir);
+		Files.createDirectories(uploadPath);
+		String fileExtension = "."
+				+ file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+		String fullUniqueFileName = uniqueFileName + fileExtension;
+		Path destinationPath = uploadPath.resolve(fullUniqueFileName);
+		Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+		
+		return fullUniqueFileName;
 	}
 }
