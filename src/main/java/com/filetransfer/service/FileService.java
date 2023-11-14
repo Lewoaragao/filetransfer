@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileService {
 
-	public final String uploadDir = "src/main/resources/static/uploads";
+	public static final String uploadDir = "src/main/resources/static/uploads";
 
 	public String saveFile(MultipartFile file) throws IOException {
 		LocalDateTime currentTime = LocalDateTime.now();

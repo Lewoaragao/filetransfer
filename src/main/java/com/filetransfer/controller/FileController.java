@@ -30,25 +30,25 @@ import org.springframework.web.multipart.MultipartFile;
 import com.filetransfer.controller.response.FileResponse;
 import com.filetransfer.controller.response.FilesResponse;
 import com.filetransfer.service.FileService;
+import com.filetransfer.util.Util;
 import com.filetransfer.vo.FileVO;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/file")
 @RequiredArgsConstructor
+@Api(tags = "Operações com arquivo do tipo File")
 public class FileController {
 
 	@Autowired
 	FileService service;
 
-	@GetMapping("/")
-	public ResponseEntity<String> uploadFile() throws IOException {
-		return ResponseEntity.ok("Aplicação configurada com sucesso!");
-	}
-
 	@PostMapping("/upload")
+	@ApiOperation(value = "Upload de um único arquivo")
 	public ResponseEntity<FileResponse> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
 		if (file.isEmpty()) {
 			return ResponseEntity.badRequest().body(new FileResponse("Arquivo vazio", null));
@@ -60,6 +60,7 @@ public class FileController {
 	}
 
 	@PostMapping("/uploads")
+	@ApiOperation(value = "Upload de vários arquivos")
 	public ResponseEntity<FilesResponse> uploadFiles(@RequestParam("files") List<MultipartFile> files)
 			throws IOException {
 		List<String> filePaths = new ArrayList<>();
@@ -82,11 +83,12 @@ public class FileController {
 	}
 
 	@GetMapping("/download/{filename}")
+	@ApiOperation(value = "Download de um único arquivo")
 	public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
-		Path filePath = Paths.get(service.uploadDir).resolve(filename);
+		Path filePath = Paths.get(FileService.uploadDir).resolve(filename);
 		Resource resource = new UrlResource(filePath.toUri());
 
-		MediaType mediaType = this.getMediaTypeForFile(filename);
+		MediaType mediaType = Util.getMediaTypeForFile(filename);
 
 		if (resource.exists() && resource.isReadable()) {
 			return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + filename)
@@ -97,6 +99,7 @@ public class FileController {
 	}
 
 	@GetMapping("/downloads")
+	@ApiOperation(value = "Download de vários arquivos em um arquivo zip")
 	public void downloadMultipleFiles(@RequestParam List<String> fileNames, HttpServletResponse response)
 			throws IOException {
 		response.setContentType("application/zip");
@@ -106,7 +109,7 @@ public class FileController {
 
 		try {
 			for (String fileName : fileNames) {
-				String filePath = service.uploadDir + fileName;
+				String filePath = FileService.uploadDir + fileName;
 
 				File file = new File(filePath);
 
@@ -127,59 +130,5 @@ public class FileController {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
-
-	public MediaType getMediaTypeForFile(String filename) {
-		String extension = filename.substring(filename.lastIndexOf(".")).toLowerCase();
-		extension = extension.replace(".", "");
-
-		switch (extension) {
-
-		case "pdf":
-			return MediaType.APPLICATION_PDF;
-		case "jpg":
-		case "jpeg":
-			return MediaType.IMAGE_JPEG;
-		case "png":
-			return MediaType.IMAGE_PNG;
-		case "gif":
-			return MediaType.IMAGE_GIF;
-		case "bmp":
-			return MediaType.valueOf("image/bmp");
-		case "svg":
-			return MediaType.valueOf("image/svg+xml");
-		case "webp":
-			return MediaType.valueOf("image/webp");
-		case "mp3":
-			return MediaType.valueOf("audio/mpeg");
-		case "wav":
-			return MediaType.valueOf("audio/wav");
-		case "ogg":
-			return MediaType.valueOf("audio/ogg");
-		case "flac":
-			return MediaType.valueOf("audio/flac");
-		default:
-			return MediaType.APPLICATION_OCTET_STREAM;
-		}
-	}
-
-//	public String saveFile(MultipartFile file) throws IOException {
-//		UUID uniqueId = UUID.randomUUID();
-//		LocalDateTime currentTime = LocalDateTime.now();
-//		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
-//		String formattedDateTime = currentTime.format(formatter);
-//		String uniqueFileName = uniqueId.toString() + "_" + formattedDateTime;
-//
-//		Path uploadPath = Paths.get(uploadDir);
-//		Files.createDirectories(uploadPath);
-//		String fileExtension = "."
-//				+ file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-//
-//		String fileName = uniqueFileName + fileExtension;
-//		Path destinationPath = uploadPath.resolve(fileName);
-//
-//		Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-//
-//		return fileName;
-//	}
 
 }
