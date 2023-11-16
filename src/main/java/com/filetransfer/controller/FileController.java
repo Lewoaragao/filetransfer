@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.filetransfer.controller.response.FileResponse;
-import com.filetransfer.controller.response.FilesResponse;
+import com.filetransfer.response.FileResponse;
+import com.filetransfer.response.FilesResponse;
 import com.filetransfer.service.FileService;
 import com.filetransfer.util.Util;
 import com.filetransfer.vo.FileVO;
@@ -46,6 +46,12 @@ public class FileController {
 
 	@Autowired
 	FileService service;
+	
+	@GetMapping("/")
+    @ApiOperation(value = "Verificação de funcionamento do Controller")
+	public ResponseEntity<String> verificacaoController() {
+		return ResponseEntity.ok("Conferindo se o FileController está configurado corretamente!");
+	}
 
 	@PostMapping("/upload")
 	@ApiOperation(value = "Upload de um único arquivo")

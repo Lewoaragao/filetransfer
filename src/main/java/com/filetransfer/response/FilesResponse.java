@@ -1,4 +1,4 @@
-package com.filetransfer.controller.response;
+package com.filetransfer.response;
 
 import java.util.List;
 
