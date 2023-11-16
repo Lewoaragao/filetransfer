@@ -1,5 +1,10 @@
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=lewoaragao%2Ffiletransfer&countColor=%233cb371)
 
+
+**Documentation in English:** [link](https://github.com/Lewoaragao/filetransfer/blob/master/README.md)
+
+**Documentação em Português abaixo**
+
 # FileTransfer
 🗂 API para transferência de arquivos.
 
