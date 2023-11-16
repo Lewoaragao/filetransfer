@@ -181,5 +181,6 @@
 - Se ocorrer algum erro durante o processo, a resposta terá o status HTTP 500 (Internal Server Error).
 
 # Contato
-**Autor:** @Lewoaragao
-**Celular:** (85) 99797-2854
+**Autor:** [@Lewoaragao](https://github.com/lewoaragao)
+
+**Celular:** [(85) 99797-2854](https://wa.me/5585997972854)
