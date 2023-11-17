@@ -66,13 +66,13 @@
   "files": [
     {
       "originalFilename": "nome_arquivo_1.txt",
-      "downloadFilename": "nome_arquivo_1_2023-10-31_12-34-56.txt",
+      "downloadFilename": "nome_arquivo_1_20231031123456.txt",
       "filename": "nome_arquivo_1",
       "extension": ".txt"
     },
     {
       "originalFilename": "nome_arquivo_2.jpg",
-      "downloadFilename": "nome_arquivo_2_2023-10-31_12-34-56.jpg",
+      "downloadFilename": "nome_arquivo_2_20231031123456.jpg",
       "filename": "nome_arquivo_2",
       "extension": ".jpg"
     }
@@ -132,13 +132,13 @@
   "files": [
     {
       "originalFilename": "nome_arquivo_1.txt",
-      "downloadFilename": "nome_arquivo_1_2023-10-31_12-34-56.txt",
+      "downloadFilename": "nome_arquivo_1_20231031123456.txt",
       "filename": "nome_arquivo_1",
       "extension": ".txt"
     },
     {
       "originalFilename": "nome_arquivo_2.jpg",
-      "downloadFilename": "nome_arquivo_2_2023-10-31_12-34-56.jpg",
+      "downloadFilename": "nome_arquivo_2_20231031123456.jpg",
       "filename": "nome_arquivo_2",
       "extension": ".jpg"
     }
