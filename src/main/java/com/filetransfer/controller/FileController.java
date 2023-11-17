@@ -17,7 +17,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,9 +45,11 @@ public class FileController {
 
 	@Autowired
 	FileService service;
-	
+
+	public int index = 0;
+
 	@GetMapping("/")
-    @ApiOperation(value = "Verificação de funcionamento do Controller")
+	@ApiOperation(value = "Verificação de funcionamento do Controller")
 	public ResponseEntity<String> verificacaoController() {
 		return ResponseEntity.ok("Conferindo se o FileController está configurado corretamente!");
 	}
@@ -56,57 +57,79 @@ public class FileController {
 	@PostMapping("/upload")
 	@ApiOperation(value = "Upload de um único arquivo")
 	public ResponseEntity<FileResponse> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-		if (file.isEmpty()) {
-			return ResponseEntity.badRequest().body(new FileResponse("Arquivo vazio", null));
-		}
+		try {
+			if (file.isEmpty()) {
+				return ResponseEntity.badRequest().body(new FileResponse("Arquivo vazio"));
+			}
 
-		String nameFile = service.saveFile(file);
-		FileResponse response = new FileResponse("Arquivo enviado com sucesso", nameFile);
-		return ResponseEntity.ok(response);
+			String nameFile = service.saveFile(file, index);
+			FileResponse response = new FileResponse(index, "Arquivo enviado com sucesso", nameFile);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(new FileResponse("Falha no upload do arquivo"));
+		}
 	}
 
 	@PostMapping("/uploads")
 	@ApiOperation(value = "Upload de vários arquivos")
 	public ResponseEntity<FilesResponse> uploadFiles(@RequestParam("files") List<MultipartFile> files)
 			throws IOException {
-		List<String> filePaths = new ArrayList<>();
-		List<FileVO> filesVO = new ArrayList<>();
+		try {
+			if (files.isEmpty()) {
+				return ResponseEntity.badRequest().body(new FilesResponse("Lista vazio"));
+			}
 
-		for (MultipartFile file : files) {
-			String nameFile = service.saveFile(file);
-			filePaths.add(nameFile);
+			List<String> filePaths = new ArrayList<>();
+			List<FileVO> filesVO = new ArrayList<>();
 
-			FileVO fileVO = new FileVO();
-			fileVO.setDownloadFilename(nameFile);
-			fileVO.setOriginalFilename(file.getOriginalFilename());
-			fileVO.setFilename(service.getFileNameWithoutExtension(file));
-			fileVO.setExtension(service.getFileExtension(file));
-			filesVO.add(fileVO);
+			for (MultipartFile file : files) {
+				String nameFile = service.saveFile(file, index);
+				filePaths.add(nameFile);
+
+				FileVO fileVO = new FileVO();
+				fileVO.setIndex(index);
+				fileVO.setDownloadFilename(nameFile);
+				fileVO.setOriginalFilename(file.getOriginalFilename());
+				fileVO.setFilename(service.getFileNameWithoutExtension(file));
+				fileVO.setExtension(service.getFileExtension(file));
+
+				filesVO.add(fileVO);
+				index++;
+			}
+
+			FilesResponse response = new FilesResponse("Arquivos enviados com sucesso", filePaths, filesVO);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError()
+					.body(new FilesResponse("Falha no upload dos arquivos", null, null));
 		}
-
-		FilesResponse response = new FilesResponse("Arquivos enviados com sucesso", filePaths, filesVO);
-		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/download/{filename}")
+	@GetMapping("/download/{fileName}")
 	@ApiOperation(value = "Download de um único arquivo")
-	public ResponseEntity<Resource> downloadFile(@PathVariable String filename) throws IOException {
-		Path filePath = Paths.get(FileService.uploadDir).resolve(filename);
-		Resource resource = new UrlResource(filePath.toUri());
+	public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) throws IOException {
+		try {
+			Path filePath = Paths.get(FileService.uploadDir).resolve(fileName);
+			Resource resource = new UrlResource(filePath.toUri());
 
-		MediaType mediaType = Util.getMediaTypeForFile(filename);
+			MediaType mediaType = Util.getMediaTypeForFile(fileName);
 
-		if (resource.exists() && resource.isReadable()) {
-			return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + filename)
-					.contentType(mediaType).body(resource);
-		} else {
-			return ResponseEntity.notFound().build();
+			if (resource.exists() && resource.isReadable()) {
+				return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + fileName)
+						.contentType(mediaType).body(resource);
+			} else {
+				return ResponseEntity.notFound().build();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().build();
 		}
 	}
 
 	@GetMapping("/downloads")
 	@ApiOperation(value = "Download de vários arquivos em um arquivo zip")
-	public void downloadMultipleFiles(@RequestParam List<String> fileNames, HttpServletResponse response)
+	public void downloadMultipleFiles(@RequestParam("fileNames") List<String> fileNames, HttpServletResponse response)
 			throws IOException {
 		response.setContentType("application/zip");
 		response.setHeader("Content-Disposition", "attachment; filename=filetransfer.zip");
@@ -115,24 +138,25 @@ public class FileController {
 
 		try {
 			for (String fileName : fileNames) {
-				String filePath = FileService.uploadDir + fileName;
+				String filePath = FileService.uploadDir + File.separator + fileName;
+				File fileToZip = new File(filePath);
+				FileInputStream fis = new FileInputStream(fileToZip);
+				ZipEntry zipEntry = new ZipEntry(fileToZip.getName());
+				zipOut.putNextEntry(zipEntry);
 
-				File file = new File(filePath);
-
-				if (file.exists()) {
-					FileInputStream fis = new FileInputStream(file);
-					ZipEntry zipEntry = new ZipEntry(file.getName());
-					zipOut.putNextEntry(zipEntry);
-
-					FileCopyUtils.copy(fis, zipOut);
-					fis.close();
-					zipOut.closeEntry();
+				byte[] bytes = new byte[1024];
+				int length;
+				while ((length = fis.read(bytes)) >= 0) {
+					zipOut.write(bytes, 0, length);
 				}
 
-				response.setStatus(HttpServletResponse.SC_OK);
+				fis.close();
 			}
+
+			zipOut.close();
+			response.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception e) {
-//	        e.printStackTrace();
+			e.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}

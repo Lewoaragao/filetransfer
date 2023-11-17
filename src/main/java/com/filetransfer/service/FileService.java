@@ -16,7 +16,7 @@ public class FileService {
 
 	public static final String uploadDir = "src/main/resources/static/uploads";
 
-	public String saveFile(MultipartFile file) throws IOException {
+	public String saveFile(MultipartFile file, Integer index) throws IOException {
 		LocalDateTime currentTime = LocalDateTime.now();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 		String formattedDateTime = currentTime.format(formatter);
@@ -28,7 +28,7 @@ public class FileService {
 		String sanitizedFileName = this.getSanitizedFileName(file);
 
 		// Combine o nome sanitizado com a data/hora formatada e a extensão do arquivo
-		String fileName = sanitizedFileName + "_" + formattedDateTime + fileExtension;
+		String fileName = sanitizedFileName + "_" + formattedDateTime + index + fileExtension;
 
 		Path uploadPath = Paths.get(uploadDir);
 		Files.createDirectories(uploadPath);

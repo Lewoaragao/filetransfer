@@ -35,9 +35,11 @@ public class PartController {
 
 	@Autowired
 	FileService service;
-	
+
+	public int index = 0;
+
 	@GetMapping("/")
-    @ApiOperation(value = "Verificação de funcionamento do Controller")
+	@ApiOperation(value = "Verificação de funcionamento do Controller")
 	public ResponseEntity<String> verificacaoController() {
 		return ResponseEntity.ok("Conferindo se o PartController está configurado corretamente!");
 	}
@@ -45,40 +47,51 @@ public class PartController {
 	@PostMapping("/upload")
 	@ApiOperation(value = "Upload de um único arquivo usando Part, convertido para File e salvo no servidor")
 	public ResponseEntity<FileResponse> uploadPart(@RequestParam("part") Part part) throws IOException {
-		if (part == null || part.getSize() < 1) {
-			return ResponseEntity.badRequest().body(new FileResponse("Arquivo vazio", null));
+		try {
+			if (part == null || part.getSize() < 1) {
+				return ResponseEntity.badRequest().body(new FileResponse("Arquivo vazio"));
+			}
+
+			MultipartFile file = Convert.convertPartToFile(part);
+
+			String namePart = service.saveFile(file, index);
+			FileResponse response = new FileResponse(index, "Arquivo enviado com sucesso", namePart);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			return ResponseEntity.internalServerError().body(new FileResponse("Falha no upload do arquivo"));
 		}
-
-		MultipartFile file = Convert.convertPartToFile(part);
-
-		String namePart = service.saveFile(file);
-		FileResponse response = new FileResponse("Arquivo enviado com sucesso", namePart);
-		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/uploads")
 	@ApiOperation(value = "Upload de vários arquivos usando Part, convertidos para File e salvos no servidor")
 	public ResponseEntity<FilesResponse> uploadParts(@RequestParam("parts") List<Part> parts) throws IOException {
-		List<String> filePaths = new ArrayList<>();
-		List<FileVO> filesVO = new ArrayList<>();
+		try {
+			List<String> filePaths = new ArrayList<>();
+			List<FileVO> filesVO = new ArrayList<>();
 
-		for (Part part : parts) {
+			for (Part part : parts) {
+				MultipartFile file = Convert.convertPartToFile(part);
 
-			MultipartFile file = Convert.convertPartToFile(part);
+				String namePart = service.saveFile(file, index);
+				filePaths.add(namePart);
 
-			String namePart = service.saveFile(file);
-			filePaths.add(namePart);
+				FileVO fileVO = new FileVO();
+				fileVO.setIndex(index);
+				fileVO.setDownloadFilename(namePart);
+				fileVO.setOriginalFilename(file.getOriginalFilename());
+				fileVO.setFilename(service.getFileNameWithoutExtension(file));
+				fileVO.setExtension(service.getFileExtension(file));
 
-			FileVO fileVO = new FileVO();
-			fileVO.setDownloadFilename(namePart);
-			fileVO.setOriginalFilename(file.getOriginalFilename());
-			fileVO.setFilename(service.getFileNameWithoutExtension(file));
-			fileVO.setExtension(service.getFileExtension(file));
-			filesVO.add(fileVO);
+				filesVO.add(fileVO);
+				index++;
+			}
+
+			FilesResponse response = new FilesResponse("Arquivos enviados com sucesso", filePaths, filesVO);
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.internalServerError().body(new FilesResponse("Falha no upload dos arquivos"));
 		}
-
-		FilesResponse response = new FilesResponse("Arquivos enviados com sucesso", filePaths, filesVO);
-		return ResponseEntity.ok(response);
 	}
 
 }

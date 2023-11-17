@@ -19,4 +19,7 @@ public class FilesResponse {
 	private List<String> fileNames;
 	private List<FileVO> files;
 
+	public FilesResponse(String message) {
+		this.message = message;
+	}
 }

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FileVO {
 
+	private Integer index;
 	private String originalFilename;
 	private String downloadFilename;
 	private String filename;

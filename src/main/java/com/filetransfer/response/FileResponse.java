@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FileResponse {
 
+	private Integer index;
 	private String message;
 	private String fileName;
 
+	public FileResponse(String message) {
+		this.message = message;
+	}
 }
