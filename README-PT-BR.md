@@ -102,8 +102,6 @@
 }
 ```
 
-```
-
 **Resposta de Erro Inesperado:**
 ```json
 {
