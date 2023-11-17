@@ -11,18 +11,18 @@
 
 ## Summary
 - Endpoints
-    - File type _File_
-      - Upload a file
-      - Upload multiple files
-    - File type _Part_
-      - Upload a file
-      - Upload multiple files
-    - Download a file
-    - Download multiple files
+   - File type _File_
+     - Upload a file
+     - Upload multiple files
+   - File type _Part_
+     - Upload a file
+     - Upload multiple files
+   - Download a file
+   - Download multiple files
 - Comments
 - Contact
 
-# Endpoints available for File type files
+# Endpoints for File type files
 ## Single File Upload
 **Endpoint:** `POST /api/file/upload`
 
@@ -34,25 +34,35 @@
 **Successful Response:**
 ```json
 {
-    "message": "File sent successfully",
-    "fileName": "file_name_20231031123456.txt"
+   "index": 0,
+   "message": "File sent successfully",
+   "fileName": "file_name_20231031123456.txt"
 }
 ```
 
 **Error Response:**
 ```json
 {
-    "message": "Empty file",
-    "FileName": null
+   "index": null,
+   "message": "Empty file",
+   "fileName": null
+}
+```
+
+**Unexpected Error Response:**
+```json
+{
+   "message": "File upload failed",
+   "fileNames": null,
+   "files": null
 }
 ```
 
 ## Multiple File Upload
-
-### File type file
+### File type files
 **Endpoint:** `POST /api/file/uploads`
 
-**Description:** Upload multiple files once.
+**Description:** Uploads multiple files at once.
 
 **Parameter:**
 - `files`: List of files to be sent of type File.
@@ -60,131 +70,162 @@
 **Successful Response:**
 ```json
 {
-    "message": "Files sent successfully",
-    "fileNames": ["file_name_1.txt", "file_name_2.jpg"],
-    "files": [
-      {
-        "originalFilename": "file_name_1.txt",
-        "downloadFilename": "file_name_1_2023-10-31_12-34-56.txt",
-        "filename": "file_name_1",
-        "extension": ".txt"
-      },
-      {
-        "originalFilename": "file_name_2.jpg",
-        "downloadFilename": "file_name_2_2023-10-31_12-34-56.jpg",
-        "filename": "file_name_2",
-        "extension": ".jpg"
-      }
-    ]
+   "message": "Files sent successfully",
+   "fileNames": ["file_name_1.txt", "file_name_2.jpg"],
+   "files": [
+     {
+       "index": 0,
+       "originalFilename": "file_name_1.txt",
+       "downloadFilename": "file_name_1_20231031123456.txt",
+       "filename": "file_name_1",
+       "extension": ".txt"
+     },
+     {
+       "index": 1,
+       "originalFilename": "file_name_2.jpg",
+       "downloadFilename": "file_name_2_20231031123456.jpg",
+       "filename": "file_name_2",
+       "extension": ".jpg"
+     }
+   ]
 }
 ```
 
 **Error Response:**
 ```json
 {
-    "message": "Empty files",
-    "filenames": null,
-    "files": null
+   "message": "Empty list",
+   "fileNames": null,
+   "files": null
 }
 ```
 
-# Endpoints available for Part type files
+**Unexpected Error Response:**
+```json
+{
+   "message": "Files upload failed",
+   "fileNames": null,
+   "files": null
+}
+```
+
+# Endpoints for Part type files
 ## Single File Upload
-**Endpoint:** `POST /api/file/upload`
+**Endpoint:** `POST /api/part/upload`
 
-**Description:** Uploads a single file of type File.
+**Description:** Uploads a single file of type Part.
 
 **Parameter:**
-- `file`: File to be sent of type File.
+- `part`: File to be sent of type File.
 
 **Successful Response:**
 ```json
 {
-    "message": "File sent successfully",
-    "fileName": "file_name_20231031123456.txt"
+   "index": 0,
+   "message": "File sent successfully",
+   "fileName": "file_name_20231031123456.txt"
 }
 ```
 
 **Error Response:**
 ```json
 {
-    "message": "Empty file",
-    "FileName": null
+   "index": null,
+   "message": "Empty file",
+   "fileName": null
+}
+```
+
+**Unexpected Error Response:**
+```json
+{
+   "message": "File upload failed",
+   "fileNames": null,
+   "files": null
 }
 ```
 
 ## Multiple File Upload
+### Part type files
+**Endpoint:** `POST /api/part/uploads`
 
-### File type file
-**Endpoint:** `POST /api/file/uploads`
-
-**Description:** Upload multiple files once.
+**Description:** Uploads multiple files at once.
 
 **Parameter:**
-- `files`: List of files to be sent of type File.
+- `parts`: List of files to be sent of type Part.
  
 **Successful Response:**
 ```json
 {
-    "message": "Files sent successfully",
-    "fileNames": ["file_name_1.txt", "file_name_2.jpg"],
-    "files": [
-      {
-        "originalFilename": "file_name_1.txt",
-        "downloadFilename": "file_name_1_2023-10-31_12-34-56.txt",
-        "filename": "file_name_1",
-        "extension": ".txt"
-      },
-      {
-        "originalFilename": "file_name_2.jpg",
-        "downloadFilename": "file_name_2_2023-10-31_12-34-56.jpg",
-        "filename": "file_name_2",
-        "extension": ".jpg"
-      }
-    ]
+   "message": "Files sent successfully",
+   "fileNames": ["file_name_1.txt", "file_name_2.jpg"],
+   "files": [
+     {
+       "index": 0,
+       "originalFilename": "file_name_1.txt",
+       "downloadFilename": "file_name_1_20231031123456.txt",
+       "filename": "file_name_1",
+       "extension": ".txt"
+     },
+     {
+       "index": 1,
+       "downloadFilename": "file_name_2_20231031123456.jpg",
+       "filename": "file_name_2",
+       "extension": ".jpg"
+     }
+   ]
 }
 ```
 
 **Error Response:**
 ```json
 {
-    "message": "Empty files",
-    "filenames": null,
-    "files": null
+   "message": "Empty list",
+   "fileNames": null,
+   "files": null
 }
 ```
 
+**Unexpected Error Response:**
+```json
+{
+   "message": "Files upload failed",
+   "fileNames": null,
+   "files": null
+}
+```
 
-## Download from File
-**Endpoint:** `GET /api/file/download/{filename}`
+## File Download
+**Endpoint:** `GET /api/file/download/{fileName}`
 
-**Description:** Download a specific file by its name.
+**Description:** Downloads a specific file by its name.
 
 **Parameters:**
-- `filename`: Name of the file to be downloaded.
+- `fileName`: Name of the file to be downloaded.
 
-**Request** `GET /api/file/downloads?filename=filename_1.txt`
+**Example request:** `GET /api/file/name_arquivo_1.txt`
  
-**Answer:** The content file_name_1.txt is downloaded as an attachment.
+**Answer:** File_name_1.txt is downloaded as an attachment.
 
-## Download multiple files in one Zip file
+## Download Multiple Files in One Zip File
 
 **Endpoint:** `GET /api/file/downloads`
 
-**Description:** Download multiple files compressed into a zip file.
+**Description:** Downloads several files compressed in a zip file.
 
 **Parameters:**
-- `fileNames`: List of file names that will be downloaded.
+- `fileNames`: List of file names to be downloaded.
 
-**Request** `GET /api/file/downloads?fileNames=file_name_1.txt,file_name_2.jpg`
+**Example request:** `GET /api/file/downloads?fileNames=file_name_1.txt,file_name_2.jpg`
 
-**Answer:** The zip file containing file_name_1.txt and file_name_2.jpg are downloaded as an attachment.
+**Answer:** The files file_name_1.txt and file_name_2.jpg are downloaded as an attachment compressed in a zip file.
 
-## Comments
-- If any file in the list does not exist in the upload directory, it will be ignored in the zip file.
-- If an error occurs during the process, the response will have HTTP status 500 (Internal Server Error).
+# General observations
+- If no file is sent per parameter in the upload _endpoints_, the response will have the status **HTTP 400 (_Bad Request_)**.
+- If any file from the list passed in the multiple file download _endpoint_ **does not exist** in the upload directory, it will be ignored in the zip file.
+- If an **unexpected error** occurs during any of the processes, the response will have the status **HTTP 500 (_Internal Server Error_)**.
 
 # Contact
-**Author:** [@Lewoaragao](https://github.com/lewoaragao)
+## Made with ❤️ by Leonardo Aragão 👋🏻 Get in touch!
 
-**Cell phone:** [(85) 99797-2854](https://wa.me/5585997972854)
+![Profile photo of Leonardo Aragão author of the FileTransfer API](https://avatars.githubusercontent.com/u/65857778?s=96&v=4)
