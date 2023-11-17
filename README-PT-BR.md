@@ -1,3 +1,4 @@
+
 ![Visitors](https://api.visitorbadge.io/api/visitors?path=lewoaragao%2Ffiletransfer&countColor=%233cb371)
 
 
@@ -23,7 +24,7 @@
 - Observações
 - Contato
 
-# Endpoints disponíveis para arquivos do tipo File
+# Endpoints para arquivos do tipo File
 ## Upload de Arquivo Único
 **Endpoint:** `POST /api/file/upload`
 
@@ -35,6 +36,7 @@
 **Resposta de Sucesso:**
 ```json
 {
+  "index": 0,
   "message": "Arquivo enviado com sucesso",
   "fileName": "nome_do_arquivo_20231031123456.txt"
 }
@@ -43,14 +45,23 @@
 **Resposta de Erro:**
 ```json
 {
+  "index": null,
   "message": "Arquivo vazio",
   "fileName": null
 }
 ```
 
-## Upload de Múltiplos Arquivos
+**Resposta de Erro Inesperado:**
+```json
+{
+  "message": "Falha no upload do arquivo",
+  "fileNames": null,
+  "files": null
+}
+```
 
-### Arquivo do tipo File
+## Upload de Múltiplos Arquivos
+### Arquivos do tipo File
 **Endpoint:** `POST /api/file/uploads`
 
 **Descrição:** Realiza o upload de vários arquivos de uma vez.
@@ -65,12 +76,14 @@
   "fileNames": ["nome_arquivo_1.txt", "nome_arquivo_2.jpg"],
   "files": [
     {
+      "index": 0,
       "originalFilename": "nome_arquivo_1.txt",
       "downloadFilename": "nome_arquivo_1_20231031123456.txt",
       "filename": "nome_arquivo_1",
       "extension": ".txt"
     },
     {
+      "index": 1,
       "originalFilename": "nome_arquivo_2.jpg",
       "downloadFilename": "nome_arquivo_2_20231031123456.jpg",
       "filename": "nome_arquivo_2",
@@ -83,24 +96,36 @@
 **Resposta de Erro:**
 ```json
 {
-  "message": "Arquivos vazios",
+  "message": "Lista vazia",
   "fileNames": null,
   "files": null
 }
 ```
 
-# Endpoints disponíveis para arquivos do tipo Part
-## Upload de Arquivo Único
-**Endpoint:** `POST /api/file/upload`
+```
 
-**Descrição:** Realiza o upload de um único arquivo do tipo File.
+**Resposta de Erro Inesperado:**
+```json
+{
+  "message": "Falha no upload dos arquivos",
+  "fileNames": null,
+  "files": null
+}
+```
+
+# Endpoints para arquivos do tipo Part
+## Upload de Arquivo Único
+**Endpoint:** `POST /api/part/upload`
+
+**Descrição:** Realiza o upload de um único arquivo do tipo Part.
 
 **Parâmetro:** 
-- `file`: Arquivo a ser enviado do tipo File.
+- `part`: Arquivo a ser enviado do tipo File.
 
 **Resposta de Sucesso:**
 ```json
 {
+  "index": 0,
   "message": "Arquivo enviado com sucesso",
   "fileName": "nome_do_arquivo_20231031123456.txt"
 }
@@ -109,20 +134,29 @@
 **Resposta de Erro:**
 ```json
 {
+  "index": null,
   "message": "Arquivo vazio",
   "fileName": null
 }
 ```
 
-## Upload de Múltiplos Arquivos
+**Resposta de Erro Inesperado:**
+```json
+{
+  "message": "Falha no upload do arquivo",
+  "fileNames": null,
+  "files": null
+}
+```
 
-### Arquivo do tipo File
-**Endpoint:** `POST /api/file/uploads`
+## Upload de Múltiplos Arquivos
+### Arquivos do tipo part
+**Endpoint:** `POST /api/part/uploads`
 
 **Descrição:** Realiza o upload de vários arquivos de uma vez.
 
 **Parâmetro:**
-- `files`: Lista de arquivos a serem enviados do tipo File.
+- `parts`: Lista de arquivos a serem enviados do tipo Part.
  
 **Resposta de Sucesso:**
 ```json
@@ -131,13 +165,14 @@
   "fileNames": ["nome_arquivo_1.txt", "nome_arquivo_2.jpg"],
   "files": [
     {
+      "index": 0,
       "originalFilename": "nome_arquivo_1.txt",
       "downloadFilename": "nome_arquivo_1_20231031123456.txt",
       "filename": "nome_arquivo_1",
       "extension": ".txt"
     },
     {
-      "originalFilename": "nome_arquivo_2.jpg",
+      "index": 1,
       "downloadFilename": "nome_arquivo_2_20231031123456.jpg",
       "filename": "nome_arquivo_2",
       "extension": ".jpg"
@@ -149,24 +184,32 @@
 **Resposta de Erro:**
 ```json
 {
-  "message": "Arquivos vazios",
+  "message": "Lista vazia",
   "fileNames": null,
   "files": null
 }
 ```
 
+**Resposta de Erro Inesperado:**
+```json
+{
+  "message": "Falha no upload dos arquivos",
+  "fileNames": null,
+  "files": null
+}
+```
 
 ## Download de Arquivo
-**Endpoint:** `GET /api/file/download/{filename}`
+**Endpoint:** `GET /api/file/download/{fileName}`
 
 **Descrição:** Baixa um arquivo específico pelo seu nome.
 
 **Parâmetros:**
-- `filename`: Nome do arquivo a ser baixado.
+- `fileName`: Nome do arquivo a ser baixado.
 
-**Requisição** `GET /api/file/downloads?filename=nome_arquivo_1.txt`
+**Requisição exemplo:** `GET /api/file/nome_arquivo_1.txt`
  
-**Resposta:** O contendo nome_arquivo_1.txt é baixado como um anexo.
+**Resposta:** O nome_arquivo_1.txt é baixado como um anexo.
 
 ## Download de Vários Arquivos em um Arquivo Zip
 
@@ -177,15 +220,24 @@
 **Parâmetros:**
 - `fileNames`: Lista de nomes de arquivos a serem baixados.
 
-**Requisição** `GET /api/file/downloads?fileNames=nome_arquivo_1.txt,nome_arquivo_2.jpg`
+**Requisição exemplo:** `GET /api/file/downloads?fileNames=nome_arquivo_1.txt,nome_arquivo_2.jpg`
 
-**Resposta:** O arquivo zip contendo nome_arquivo_1.txt e nome_arquivo_2.jpg são baixados como um anexo.
+**Resposta:** Os arquivos nome_arquivo_1.txt e nome_arquivo_2.jpg são baixados como um anexo compactados em um arquivo zip.
 
-## Observações
-- Caso algum arquivo da lista não exista no diretório de upload, ele será ignorado no arquivo zip.
-- Se ocorrer algum erro durante o processo, a resposta terá o status HTTP 500 (Internal Server Error).
+# Observações Gerais
+- Se não for enviado nenhum arquivo por parâmetro nos _endpoints_ de upload a resposta terá o status **HTTP 400 (_Bad Request_)**.
+- Caso algum arquivo da lista passada no _endpoint_ de download de múltiplos arquivos **não exista** no diretório de upload, ele será ignorado no arquivo zip.
+- Se ocorrer algum **erro inesperado** durante algum dos processos, a resposta terá o status **HTTP 500 (_Internal Server Error_)**.
 
 # Contato
+## Feito com ❤️ por Leonardo Aragão 👋🏻 Entre em contato!
+
+![Foto de perfil de Leonardo Aragão autor da API FileTransfer](https://avatars.githubusercontent.com/u/65857778?s=96&v=4)
+
 **Autor:** [@Lewoaragao](https://github.com/lewoaragao)
 
 **Celular:** [(85) 99797-2854](https://wa.me/5585997972854)
+
+**Instagram:** https://instagram.com/lewoaragao
+
+**LinkedIn:** http://linkedin.com/in/lewoaragao
