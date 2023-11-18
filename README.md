@@ -71,7 +71,7 @@
 ```json
 {
    "message": "Files sent successfully",
-   "fileNames": ["file_name_1.txt", "file_name_2.jpg"],
+   "fileNames": ["file name 1.txt", "file name 2.jpg"],
    "files": [
      {
        "index": 0,
@@ -158,7 +158,7 @@
 ```json
 {
    "message": "Files sent successfully",
-   "fileNames": ["file_name_1.txt", "file_name_2.jpg"],
+   "fileNames": ["file name 1.txt", "file name 2.jpg"],
    "files": [
      {
        "index": 0,
