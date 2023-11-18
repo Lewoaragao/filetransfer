@@ -76,14 +76,14 @@
      {
        "index": 0,
        "originalFilename": "file_name_1.txt",
-       "downloadFilename": "file_name_1_20231031123456.txt",
+       "downloadFilename": "file_name_1_202310311234560.txt",
        "filename": "file_name_1",
        "extension": ".txt"
      },
      {
        "index": 1,
        "originalFilename": "file_name_2.jpg",
-       "downloadFilename": "file_name_2_20231031123456.jpg",
+       "downloadFilename": "file_name_2_202310311234561.jpg",
        "filename": "file_name_2",
        "extension": ".jpg"
      }
@@ -163,13 +163,13 @@
      {
        "index": 0,
        "originalFilename": "file_name_1.txt",
-       "downloadFilename": "file_name_1_20231031123456.txt",
+       "downloadFilename": "file_name_1_202310311234560.txt",
        "filename": "file_name_1",
        "extension": ".txt"
      },
      {
        "index": 1,
-       "downloadFilename": "file_name_2_20231031123456.jpg",
+       "downloadFilename": "file_name_2_202310311234561.jpg",
        "filename": "file_name_2",
        "extension": ".jpg"
      }
