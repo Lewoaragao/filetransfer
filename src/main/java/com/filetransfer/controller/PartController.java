@@ -36,8 +36,6 @@ public class PartController {
 	@Autowired
 	FileService service;
 
-	public int index = 0;
-
 	@GetMapping("/")
 	@ApiOperation(value = "Verificação de funcionamento do Controller")
 	public ResponseEntity<String> verificacaoController() {
@@ -54,6 +52,7 @@ public class PartController {
 
 			MultipartFile file = Convert.convertPartToFile(part);
 
+			int index = 0;
 			String namePart = service.saveFile(file, index);
 			FileResponse response = new FileResponse(index, "Arquivo enviado com sucesso", namePart);
 			return ResponseEntity.ok(response);
@@ -69,6 +68,7 @@ public class PartController {
 			List<String> filePaths = new ArrayList<>();
 			List<FileVO> filesVO = new ArrayList<>();
 
+			int index = 0;
 			for (Part part : parts) {
 				MultipartFile file = Convert.convertPartToFile(part);
 

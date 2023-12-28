@@ -45,7 +45,7 @@ public class PartToMultipartFileConverter implements MultipartFile {
     public byte[] getBytes() throws IOException {
         try (InputStream inputStream = part.getInputStream()) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[9999];
             int bytesRead;
 
             while ((bytesRead = inputStream.read(buffer)) != -1) {

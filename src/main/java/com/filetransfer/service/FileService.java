@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -45,7 +46,7 @@ public class FileService {
 
 		// Verifique se o nome original do arquivo contém uma extensão
 		int lastIndex = originalFileName.lastIndexOf('.');
-		
+
 		if (lastIndex >= 0) {
 			// Remova a extensão do nome original
 			return originalFileName.substring(0, lastIndex);
@@ -58,11 +59,26 @@ public class FileService {
 	public String getSanitizedFileName(MultipartFile file) {
 		// Obtenha o nome original do arquivo
 		String originalFileName = this.getFileNameWithoutExtension(file);
+
+		// Remova a acentuação substituindo caracteres acentuados por não acentuados
+		originalFileName = removeAccents(originalFileName);
 		
+		// Remove todos os pontos de interrogação por underline, 
+		// geralmente ocorre por erro de encoding, por isso vem esses
+		// pontos de interrogação
+		originalFileName = originalFileName.replace("?", "_");
+
 		// Substitua espaços por underscores
 		String sanitizedFileName = originalFileName.replaceAll(" ", "_");
 
 		return sanitizedFileName;
+	}
+
+	private String removeAccents(String input) {
+		// Use Normalizer para remover a acentuação
+		String normalizedString = Normalizer.normalize(input, Normalizer.Form.NFD);
+		// Substitua caracteres acentuados por não acentuados
+		return normalizedString.replaceAll("[^\\p{ASCII}]", "");
 	}
 
 	public String getFileExtension(MultipartFile file) {
