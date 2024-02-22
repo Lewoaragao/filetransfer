@@ -15,7 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileService {
 
-	public static final String uploadDir = "src/main/resources/static/uploads";
+	// public static final String uploadDir = "src/main/resources/static/uploads";
+	public static final String uploadDir = "/uploads";
 
 	public String saveFile(MultipartFile file, Integer index) throws IOException {
 		LocalDateTime currentTime = LocalDateTime.now();
@@ -62,8 +63,8 @@ public class FileService {
 
 		// Remova a acentuação substituindo caracteres acentuados por não acentuados
 		originalFileName = removeAccents(originalFileName);
-		
-		// Remove todos os pontos de interrogação por underline, 
+
+		// Remove todos os pontos de interrogação por underline,
 		// geralmente ocorre por erro de encoding, por isso vem esses
 		// pontos de interrogação
 		originalFileName = originalFileName.replace("?", "_");
